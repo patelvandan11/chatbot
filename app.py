@@ -57,6 +57,7 @@ def logout():
     flash('You have been logged out.')
     return redirect(url_for('login'))
 
+
 @app.route('/upload', methods=['POST'])
 def upload_image():
     if 'file' not in request.files:
@@ -67,11 +68,14 @@ def upload_image():
         return jsonify({'error': 'No selected file'}), 400
 
     if file:
+        # Save the file to the upload folder
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         file.save(filepath)
 
-        # Send the image to OpenAI API for analysis
+        # Create the URL for the uploaded file
         image_url = url_for('uploaded_file', filename=file.filename, _external=True)
+        
+        # Send the image URL to OpenAI API for analysis
         response = analyze_image(image_url)
 
         return jsonify({'message': 'File successfully uploaded', 'response': response}), 200
