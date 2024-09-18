@@ -1,174 +1,175 @@
-    /* Reset and basic styling */
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f0f0f0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
-    .container {
-        width: 90%;
-        max-width: 800px;
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
+.container {
+    width: 90%;
+    max-width: 800px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-    /* Chatbot header styling */
-    .chatbot-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-    }
+.chatbot-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
 
-    .chatbot-icon {
-        width: 40px;
-        height: 40px;
-        margin-right: 10px;
-    }
+.chatbot-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
 
-    .chatbot-header h2 {
-        font-size: 1.5rem;
-        color: #333;
-        margin: 0;
-    }
+.chatbot-header h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin: 0;
+}
 
-    .status-indicator {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background-color: #4CAF50;
-        margin-left: 10px;
-    }
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #4CAF50;
+    margin-left: 10px;
+}
 
-    /* Chatbot messages styling */
-    .chatbot-messages {
-        max-height: 300px;
-        overflow-y: auto;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        margin-bottom: 20px;
-    }
+.chatbot-messages {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
 
-    .bot-message, .user-message {
-        padding: 10px;
-        margin-bottom: 10px;
-        border-radius: 5px;
-    }
+.bot-message, .user-message {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
 
-    .bot-message {
-        background-color: #f0f0f0;
-    }
+.bot-message {
+    background-color: #f0f0f0;
+}
 
-    .user-message {
-        background-color: #ffeb3b;
-        text-align: right;
-    }
+.user-message {
+    background-color: #ffeb3b;
+    text-align: right;
+}
 
-    .user-message img, .bot-message img {
-        max-width: 100%;
-        height: auto;
-        margin-top: 10px;
-        border-radius: 5px;
-    }
+.user-message, .bot-message {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px; /* Space between images */
+    align-items: center;
+}
 
-    /* User input area styling */
-    .user-input {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-    }
+.user-message img, .bot-message img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover; /* Ensure images are cropped if needed */
+    margin: 0;
+    border-radius: 3px; /* Rounded edges */
+}
 
-    .user-input input[type="text"] {
-        flex-grow: 1;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        font-size: 1rem;
-    }
+.user-input {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
 
-    .user-input input[type="file"] {
-        margin-left: 10px;
-    }
+.user-input input[type="text"] {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
 
-    .user-input button {
-        padding: 10px 20px;
-        background-color: #4CAF50;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 1rem;
-        margin-left: 10px;
-    }
+.user-input input[type="file"] {
+    margin-left: 10px;
+}
 
-    .user-input button:hover {
-        background-color: #45a049;
-    }
+.user-input button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-left: 10px;
+}
 
-    /* Drag and drop area styling */
-    .drag-area {
-        margin-top: 10px;
-        padding: 20px;
-        border: 2px dashed #ccc;
-        border-radius: 5px;
-        text-align: center;
-        color: #999;
-        cursor: pointer;
-    }
+.user-input button:hover {
+    background-color: #45a049;
+}
 
-    .drag-area.dragging {
-        background-color: #e0f7fa;
-        border-color: #4CAF50;
-        color: #333;
-    }
+.drag-area {
+    margin-top: 10px;
+    padding: 20px;
+    border: 2px dashed #ccc;
+    border-radius: 5px;
+    text-align: center;
+    color: #999;
+    cursor: pointer;
+}
 
-    .drag-area p {
-        margin: 0;
-    }
+.drag-area.dragging {
+    background-color: #e0f7fa;
+    border-color: #4CAF50;
+    color: #333;
+}
 
-    /* Options buttons styling */
-    .options {
-        display: flex;
-        justify-content: space-between;
-    }
+.drag-area p {
+    margin: 0;
+}
 
-    .option {
-        flex-grow: 1;
-        padding: 10px;
-        background-color: #2196F3;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 1rem;
-        text-align: center;
-    }
+.options {
+    display: flex;
+    justify-content: space-between;
+}
 
-    .option:hover {
-        background-color: #0b7dda;
-    }
+.option {
+    flex-grow: 1;
+    padding: 10px;
+    background-color: #2196F3;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    text-align: center;
+}
 
-    /* Logout link styling */
-    a {
-        display: block;
-        text-align: center;
-        color: #2196F3;
-        margin-top: 10px;
-        text-decoration: none;
-        font-size: 0.9rem;
-    }
+.option:hover {
+    background-color: #0b7dda;
+}
 
-    a:hover {
-        text-decoration: underline;
-    }
+a {
+    display: block;
+    text-align: center;
+    color: #2196F3;
+    margin-top: 10px;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+a:hover {
+    text-decoration: underline;
+}
