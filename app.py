@@ -9,11 +9,13 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 app.config['UPLOAD_FOLDER'] = 'uploads/'
 
-# Set your OpenAI API key
-openai.api_key = 'api'
+import os
+
+openai_api_key = os.getenv("OPENAI_API_KEY")
+
 
 # Initialize Groq client and model (ensure you have the correct API key and model)
-client = Groq(api_key='gapi')
+client = Groq(api_key='apig')
 model = 'llava-v1.5-7b-4096-preview'
 
 # In-memory user database for demo purposes
