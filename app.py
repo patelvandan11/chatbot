@@ -9,9 +9,7 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 app.config['UPLOAD_FOLDER'] = 'uploads/'
 
-import os
-
-openai_api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = 'api'
 
 
 # Initialize Groq client and model (ensure you have the correct API key and model)
