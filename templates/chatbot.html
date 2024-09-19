@@ -6,7 +6,6 @@
     <title>Chatbot</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='1.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='2.css') }}">
-     
 </head>
 <body>
     <div class="container">
@@ -57,16 +56,21 @@
         function sendMessage() {
             const message = chatbotInput.value.trim();
             const imageFiles = chatbotImage.files;
-        
-            // Create FormData to hold multiple files
+
+            if (message) {
+                displayMessage('user', message);  // Display user's message
+            }
+
+            // Create FormData to hold multiple files and message
             let formData = new FormData();
             Array.from(imageFiles).forEach(file => {
                 formData.append('file', file);
             });
-        
+
             // Add message prompt to formData
             formData.append('prompt', message || 'Describe this image.');
-        
+
+            // Send request to the backend (Flask) using Fetch API
             fetch('/upload', {
                 method: 'POST',
                 body: formData
@@ -75,27 +79,43 @@
             .then(data => {
                 if (data.responses) {
                     data.responses.forEach(response => {
-                        displayMessage('bot', response);
+                        displayMessage('bot', response);  // Display bot's response
                     });
+                }
+                // Check if there's still a text query after image response
+                if (message) {
+                    fetch('/query', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ query: message })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.response) {
+                            displayMessage('bot', data.response);  // Display bot's response to the query
+                        }
+                    })
+                    .catch(error => console.error('Error querying:', error));
                 }
             })
             .catch(error => console.error('Error uploading images:', error));
-        
+
             // Clear input and images after sending
             chatbotInput.value = '';
             chatbotImage.value = '';
         }
-        
 
         function displayMessage(sender, content) {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
-            messageDiv.innerHTML = content; // Insert both text and images together
+            messageDiv.innerHTML = content;  // Insert both text and images together
             chatbotMessages.appendChild(messageDiv);
-            chatbotMessages.scrollTop = chatbotMessages.scrollHeight; // Auto-scroll to the bottom
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;  // Auto-scroll to the bottom
         }
-        
 
+        // Handle drag and drop image upload
         dragArea.addEventListener('dragover', (event) => {
             event.preventDefault();
             dragArea.classList.add('dragging');
