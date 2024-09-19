@@ -3,45 +3,18 @@ import os
 import openai
 from groq import Groq
 import base64
-from IPython.display import Image
-
- 
-# Define image encoding function
-def encode_image(image_path):
-    with open(image_path, "rb") as image_file:
-        return base64.b64encode(image_file.read()).decode('utf-8')
-
-# Interact with model for image descriptions
-def image_to_text(client, model, base64_images, prompt):
-    responses = []
-    for base64_image in base64_images:
-        chat_completion = client.chat.completions.create(
-            messages=[
-                {
-                    "role": "user",
-                    "content": [
-                        {"type": "text", "text": prompt},
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": f"data:image/jpeg;base64,{base64_image}",
-                            },
-                        },
-                    ],
-                }
-            ],
-            model=model
-        )
-        response = chat_completion.choices[0].message.content
-        responses.append(response)
-    return responses
+import logging
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 app.config['UPLOAD_FOLDER'] = 'uploads/'
 
 # Set your OpenAI API key
-openai.api_key = 'your_openai_api_key'
+openai.api_key = 'api'
+
+# Initialize Groq client and model (ensure you have the correct API key and model)
+client = Groq(api_key='gapi')
+model = 'llava-v1.5-7b-4096-preview'
 
 # In-memory user database for demo purposes
 users = {'test@example.com': {'password': 'password'}}
@@ -52,7 +25,6 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 
 @app.route('/')
 def home():
-    
     return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -91,64 +63,46 @@ def logout():
     flash('You have been logged out.')
     return redirect(url_for('login'))
 
-
 @app.route('/upload', methods=['POST'])
 def upload_image():
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
+    if 'file' not in request.files and 'prompt' not in request.form:
+        return jsonify({'error': 'No input provided'}), 400
 
     files = request.files.getlist('file')  # Support multiple files
-    if len(files) == 0:
-        return jsonify({'error': 'No selected files'}), 400
+    prompt = request.form.get('prompt', '')
 
-    # Store the image file paths and base64 encoded images
     base64_images = []
+    responses = []
 
-    for file in files:
-        if file.filename == '':
-            return jsonify({'error': 'No selected file'}), 400
+    # Handle images if they exist
+    if files:
+        for file in files:
+            if file.filename != '':
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+                file.save(filepath)
+                base64_image = encode_image(filepath)
+                base64_images.append(base64_image)
 
-        if file:
-            # Save the file to the upload folder
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-            file.save(filepath)
+        # Call the Groq model for image processing
+        responses = image_to_text(client, model, base64_images, prompt or 'Describe this image.')
 
-            # Encode the file into base64
-            base64_image = encode_image(filepath)
-            base64_images.append(base64_image)
+    # If only text is provided, call the OpenAI model for a text response
+    if prompt and not base64_images:
+        try:
+            logging.debug(f"Calling OpenAI API with prompt: {prompt}")
+            openai_response = openai.Completion.create(
+                engine="text-davinci-003",
+                prompt=prompt,
+                max_tokens=150
+            )
+            response_text = openai_response.choices[0].text.strip()
+            logging.debug(f"OpenAI API response: {response_text}")
+            responses.append(response_text)
+        except Exception as e:
+            logging.error(f"Error calling OpenAI API: {str(e)}")
+            return jsonify({'error': 'Error processing request'}), 500
 
-    # Initialize Groq client and model
-    client = Groq(api_key='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')
-    model = 'llava-v1.5-7b-4096-preview'
-
-    # Get a prompt from the user or use a default one
-    prompt = request.form.get('prompt', 'Describe this image.')
-
-    # Call the Groq model for all uploaded images
-    responses = image_to_text(client, model, base64_images, prompt)
-
-    # Return the model's response for each image
     return jsonify({'responses': responses}), 200
-
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
-
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
-
-    if file:
-        # Save the file to the upload folder
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-        file.save(filepath)
-
-        # Create the URL for the uploaded file
-        image_url = url_for('uploaded_file', filename=file.filename, _external=True)
-        
-        # Send the image URL to OpenAI API for analysis
-        response = analyze_image(image_url)
-
-        return jsonify({'message': 'File successfully uploaded', 'response': response}), 200
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
@@ -179,6 +133,35 @@ def analyze_image(image_url):
         return response['choices'][0]['message']['content']
     except Exception as e:
         return f"Error analyzing image: {str(e)}"
+
+def encode_image(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode('utf-8')
+
+def image_to_text(client, model, base64_images, prompt):
+    responses = []
+    
+    for base64_image in base64_images:
+        chat_completion = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": prompt},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{base64_image}",
+                            },
+                        },
+                    ],
+                }
+            ],
+            model=model
+        )
+        response = chat_completion.choices[0].message.content
+        responses.append(response)
+    return responses
 
 if __name__ == '__main__':
     app.run(debug=True)
