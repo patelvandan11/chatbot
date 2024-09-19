@@ -11,14 +11,12 @@
     <div class="container">
         <div class="chatbot-header">
             <img src="./static/images/icon.jpg" alt="ChatBot Icon" class="chatbot-icon">
-            <h2>Hatsumei ChatBot</h2>
+            <h2>ChatBot</h2>
             <div class="status-indicator online"></div>
         </div>
 
         <div class="chatbot-messages" id="chatbot-messages">
-            <div class="bot-message">
-                <p>Hello, welcome to ChatBot University! 👋</p>
-            </div>
+           
             <div class="bot-message">
                 <p>How can I help you?</p>
             </div>
@@ -26,13 +24,13 @@
 
         <div class="user-input">
             <input type="text" id="chatbot-input" placeholder="Send a message...">
-            <input type="file" id="chatbot-image" multiple>
+            <div class="drag-area" id="drag-area">
+                <input type="file" id="chatbot-image" multiple>
+
+            </div>
             <button id="send-message">Send</button>
         </div>
 
-        <div class="drag-area" id="drag-area">
-            <p>Drag & Drop images here or click to upload</p>
-        </div>
 
         <a href="{{ url_for('logout') }}">Logout</a>
     </div>
