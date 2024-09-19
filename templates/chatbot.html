@@ -58,31 +58,32 @@
             const message = chatbotInput.value.trim();
             const imageFiles = chatbotImage.files;
         
-            if (message) {
-                displayMessage('user', message);
-                chatbotInput.value = '';
-                setTimeout(() => {
-                    displayMessage('bot', 'This is a response from the bot.');
-                }, 1000);
-            }
+            // Create FormData to hold multiple files
+            let formData = new FormData();
+            Array.from(imageFiles).forEach(file => {
+                formData.append('file', file);
+            });
         
-            if (imageFiles.length > 0) {
-                let imagesHTML = ''; // Store all images as HTML
-                Array.from(imageFiles).forEach(file => {
-                    if (file.type.startsWith('image/')) {
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            imagesHTML += `<img src="${e.target.result}" alt="Uploaded Image">`;
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
+            // Add message prompt to formData
+            formData.append('prompt', message || 'Describe this image.');
         
-                setTimeout(() => {
-                    displayMessage('user', imagesHTML); // Display all images in one message
-                    chatbotImage.value = ''; // Clear the input after sending
-                }, 500); // Allow time for all images to be processed
-            }
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.responses) {
+                    data.responses.forEach(response => {
+                        displayMessage('bot', response);
+                    });
+                }
+            })
+            .catch(error => console.error('Error uploading images:', error));
+        
+            // Clear input and images after sending
+            chatbotInput.value = '';
+            chatbotImage.value = '';
         }
         
 
