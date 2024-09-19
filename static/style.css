@@ -1,7 +1,7 @@
 /* General styling */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
+    background-color: #2c3e50;
     margin: 0;
     padding: 0;
     display: flex;
@@ -9,7 +9,14 @@ body {
     align-items: center;
     height: 100vh;
 }
-
+p{
+    color: white;
+}
+a:-webkit-any-link {
+    color: #3498db;
+    cursor: pointer;
+    text-decoration: underline;
+}
 h2 {
     text-align: center;
 }
@@ -17,15 +24,16 @@ h2 {
 /* Sign-up and login form styling */
 .login {
     width: 300px;
+    background: #34495e;
     padding: 20px;
-    border: 1px solid #ccc;
+    border: 1px solid #2980b9;
     border-radius: 10px;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #2c3e50;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
 }
 
 input[type="email"], input[type="password"], input[type="text"] {
-    width: 100%;
+    width: 93%;
     padding: 10px;
     margin: 10px 0;
     border: 1px solid #ccc;
@@ -34,8 +42,9 @@ input[type="email"], input[type="password"], input[type="text"] {
 
 button {
     width: 100%;
+    margin-top: 15px;
     padding: 10px;
-    background-color: #4A90E2;
+    background-color: #a3b1c0;
     color: white;
     border: none;
     border-radius: 5px;
@@ -122,4 +131,10 @@ button:hover {
 
 #send-message:hover {
     background-color: #357ABD;
+}
+h2{
+    text-align: center;
+    -webkit-text-fill-color: transparent;
+    background: linear-gradient(90deg,#3498db,#9b59b6);
+    -webkit-background-clip: text;
 }
