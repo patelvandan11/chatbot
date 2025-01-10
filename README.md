@@ -1,6 +1,6 @@
 # Conversational Image Recognition Chatbot  
 
-![Project Logo](./icon.png)  
+![Project Logo](.static/images/icon.png)  
 
 ## Project Overview  
 This project focuses on developing a **Conversational Image Recognition Chatbot** using **Natural Language Processing (NLP)** and the **Vision Transformer (ViT/B-16) model**. The chatbot enables users to interact through text and image inputs, providing intelligent and contextual responses based on image recognition and conversational AI.  
